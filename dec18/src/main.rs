@@ -1,5 +1,6 @@
 use std::fs;
 use std::iter;
+use std::fmt::{self, Formatter, Display};
 
 #[derive(Debug, Clone)]
 enum Node {
@@ -131,17 +132,19 @@ fn parse_operation(string: &str, stage: usize) -> Node {
 	}
 }
 
-fn node_to_string(node: &Node) -> String {
-	match node {
-		Node::Number(x) => x.to_string(),
-		Node::Operation(op) => {
-			format!("({} {} {})", node_to_string(&op.left), op.op, node_to_string(&op.right))
+impl Display for Node {
+	fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+		match self {
+			Node::Number(x) => write!(f, "{}", x.to_string()),
+			Node::Operation(op) => {
+				write!(f, "({} {} {})", &op.left, op.op, &op.right)
+			}
 		}
 	}
 }
 
 fn interpret(node: &Node) -> isize {
-	//println!("{}", node_to_string(node));
+	//println!("{}", node);
 	match node {
 		Node::Number(x) => *x,
 		Node::Operation(op) => {
